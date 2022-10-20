@@ -1,25 +1,22 @@
-module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
+{
+  "env": {
+     "browser": true,
+     "es2021": true
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'airbnb-base',
+  "extends": [
+     "eslint:recommended",
+     "plugin:react/recommended",
+     "airbnb-base"
   ],
-
-  allow: ['_id'],
-
-  overrides: [
+  "allow": [
+     "_id"
   ],
-
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+  "overrides": [],
+  "parserOptions": {
+     "ecmaVersion": "latest",
+     "sourceType": "module"
   },
-
-  plugins: [
-    'react',
-  ],
-};
+  "plugins": [
+     "react"
+  ]
+}
