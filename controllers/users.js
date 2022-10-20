@@ -11,7 +11,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.UserId)
     .then((user) => {
-      if (user = "null"){res.status(NotFoundError).send({ message: 'Запрашиваемый пользователь не найден'}); return; } else {
+      if (!user){res.status(NotFoundError).send({ message: 'Запрашиваемый пользователь не найден'}); return; } else {
       res.send({ user });}
     })
     .catch((err) => {

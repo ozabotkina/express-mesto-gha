@@ -10,10 +10,10 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
-  .then((card) => { if(!card){res.status(BadRequest).send({ message: 'Запрашиваемая карточка не найдена' })} else {
+  .then((card) => { if(!card){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена' })} else {
     res.send(card)}})
   .catch((err) => {
-      if (err.name === 'CastError') { res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена' }); return; }
+      if (err.name === 'CastError') { res.status(BadRequest).send({ message: 'Запрашиваемая карточка не найдена' }); return; }
       res.status(GeneralError).send({ message: 'Произошла ошибка' });
     });
 };
@@ -37,7 +37,7 @@ module.exports.likeCard = (req, res) => {
     { new: true, runValidators: true},
   )
     .then((card) => {
-      if (card = "null"){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена'}); return; } else {
+      if (!card){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена'}); return; } else {
       res.send({ card });}
     })
     .catch((err) => {
@@ -54,7 +54,7 @@ module.exports.dislikeCard = (req, res) => {
     { new: true, runValidators: true },
   )
   .then((card) => {
-    if (card = "null"){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена'}); return; } else {
+    if (!card){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена'}); return; } else {
     res.send({ card });}
   })
   .catch((err) => {

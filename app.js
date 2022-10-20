@@ -24,10 +24,10 @@ app.use((req, res, next) => {
 
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
-app.patch('/:smth', function(req,res){res.status(404).send('Неправильный адрес')});
-
+app.use('/*', (req, res) => {
+  res.status(404).send({ message:'Неправильный путь' })})
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(PORT);
-});
+})
