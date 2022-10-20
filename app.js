@@ -21,8 +21,11 @@ app.use((req, res, next) => {
   next();
 });
 
+
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
+app.patch('/:smth', function(req,res){res.status(404).send('Неправильный адрес')});
+
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
