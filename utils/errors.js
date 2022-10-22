@@ -5,5 +5,6 @@ const GeneralError = 500;
 module.exports = {
   NotFoundError,
   BadRequest,
-  GeneralError
-}
+  GeneralError,
+
+};

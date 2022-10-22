@@ -1,6 +1,5 @@
-
 const Card = require('../models/card');
-const { NotFoundError, GeneralError, BadRequest} = require('../utils/errors.js');
+const { NotFoundError, GeneralError, BadRequest } = require('../utils/errors');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -10,9 +9,12 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
-  .then((card) => { if(!card){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена' })} else {
-    res.send(card)}})
-  .catch((err) => {
+    .then((card) => {
+      if (!card) { res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена' }); } else {
+        res.send(card);
+      }
+    })
+    .catch((err) => {
       if (err.name === 'CastError') { res.status(BadRequest).send({ message: 'Запрашиваемая карточка не найдена' }); return; }
       res.status(GeneralError).send({ message: 'Произошла ошибка' });
     });
@@ -30,15 +32,15 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.likeCard = (req, res) => {
-
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true, runValidators: true},
+    { new: true, runValidators: true },
   )
     .then((card) => {
-      if (!card){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена'}); return; } else {
-      res.send({ card });}
+      if (!card) { res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена' }); } else {
+        res.send({ card });
+      }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') { res.status(BadRequest).send({ message: 'Некорректный запрос' }); return; }
@@ -53,13 +55,14 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-  .then((card) => {
-    if (!card){res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена'}); return; } else {
-    res.send({ card });}
-  })
-  .catch((err) => {
-    if (err.name === 'ValidationError') { res.status(BadRequest).send({ message: 'Некорректный запрос' }); return; }
-    if (err.name === 'CastError') { res.status(BadRequest).send({ message: 'Запрашиваемая карточка не найдена' }); return; }
-    res.status(GeneralError).send({ message: 'Произошла ошибка' });
-  });
+    .then((card) => {
+      if (!card) { res.status(NotFoundError).send({ message: 'Запрашиваемая карточка не найдена' }); } else {
+        res.send({ card });
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') { res.status(BadRequest).send({ message: 'Некорректный запрос' }); return; }
+      if (err.name === 'CastError') { res.status(BadRequest).send({ message: 'Запрашиваемая карточка не найдена' }); return; }
+      res.status(GeneralError).send({ message: 'Произошла ошибка' });
+    });
 };

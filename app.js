@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
+const { NotFoundError } = require('./utils/errors');
 
 const { PORT = 3000 } = process.env;
 
@@ -21,13 +22,13 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
 app.use('/*', (req, res) => {
-  res.status(404).send({ message:'Неправильный путь' })})
+  res.status(NotFoundError).send({ message: 'Неправильный путь' });
+});
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(PORT);
-})
+});
