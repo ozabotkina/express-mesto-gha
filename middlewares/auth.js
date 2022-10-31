@@ -1,0 +1,17 @@
+const jwt = require('jsonwebtoken');
+const BadRequest = require('../errors/BadRequest');
+const Error401 = require('../errors/Error401');
+
+module.exports = (req, res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new BadRequest('Необходима авторизация');
+  }
+  const token = authorization.replace('Bearer ', '');
+  let payload;
+  try {
+    payload = jwt.verify(token, 'something_4_mistery');
+  } catch (err) { throw new Error401('Необходима авторизация'); }
+  req.user = { _id: payload };
+  next();
+};
