@@ -61,7 +61,7 @@ app.use((err, req, res) => {
   }
   res
     .status(err.statusCode)
-    .send(err.message);
+    .send({ message: err.message });
 });
 
 app.listen(PORT, () => {
