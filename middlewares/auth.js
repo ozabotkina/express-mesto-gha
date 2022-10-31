@@ -4,13 +4,13 @@ const Error401 = require('../errors/Error401');
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new Error401({ message: 'Необходима авторизация' });
+    throw new Error401('Необходима авторизация');
   }
   const token = authorization.replace('Bearer ', '');
   let payload;
   try {
     payload = jwt.verify(token, 'something_4_mistery');
-  } catch (err) { throw new Error401({ message: 'Необходима авторизация' }); }
+  } catch (err) { throw new Error401('Необходима авторизация'); }
   req.user = { _id: payload };
   next();
 };

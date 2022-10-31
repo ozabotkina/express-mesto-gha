@@ -36,7 +36,8 @@ app.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().uri(),
+      // eslint-disable-next-line no-useless-escape
+      avatar: Joi.string().uri().pattern(/https?:\/\/[\w\-а-яё\.\_~:/?#\[\]@!$&'\(\)\*\+,;=]+\.\w{2,5}\/?[\w\-а-яё\.\_~:/?#\[\]@!$&'\(\)\*\+,;=]*/i),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
@@ -61,7 +62,7 @@ app.use((err, req, res) => {
   }
   res
     .status(err.statusCode)
-    .send({ message: err.message });
+    .send(err.message);
 });
 
 app.listen(PORT, () => {
