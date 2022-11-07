@@ -4,6 +4,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const Error409 = require('../errors/Error409');
+const Error401 = require('../errors/Error401');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -14,8 +15,8 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.UserId)
     .then((user) => {
-      if (!user) { throw new NotFoundError('Нет пользователя с таким id'); }
-      res.send({ user });
+      if (!user) { throw new NotFoundError(' Нет пользователя с таким id'); }
+      res.send(user);
     })
     .catch((err) => {
       next(err);
@@ -31,10 +32,16 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => {
-      res.send({ data: user });
+    .then(({
+      name, about, avatar, email,
+    }) => {
+      res.status(200).send({
+        name, about, avatar, email,
+      });
     })
-    .catch((err) => { if (err.code === 11000) { throw new Error409('Емейл уже зарегистрирован'); } })
+    .catch((err) => {
+      if (err.code === 11000) { throw new Error409('Емейл уже зарегистрирован'); }
+    })
     .catch((err) => next(err));
 };
 
@@ -90,16 +97,16 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
     .then((user) => {
-      if (!user) { throw new NotFoundError('Неправильные почта или пароль'); }
+      if (!user) { throw new Error401('Неправильные почта или пароль'); }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
-          if (!matched) { throw new NotFoundError('Неправильные почта или пароль'); }
+          if (!matched) { throw new Error401('Неправильные почта или пароль'); }
           return user;
         });
     })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'something_4_mistery', { expiresIn: '7d' });
-      res.send(token);
+      res.send({ token });
     })
     .catch(next);
 };

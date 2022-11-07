@@ -8,7 +8,7 @@ const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
 const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
+const tokenAuth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -30,6 +30,7 @@ app.post(
   }),
   login,
 );
+
 app.post(
   '/signup',
   celebrate({
@@ -45,24 +46,26 @@ app.post(
   createUser,
 );
 
-app.use(auth);
-
-app.use('/users', routerUsers);
-app.use('/cards', routerCards);
+app.use('/users', tokenAuth, routerUsers);
+app.use('/cards', tokenAuth, routerCards);
 
 app.use('/*', () => {
   throw new NotFoundError('Неправильный путь');
 });
 
 app.use(errors());
-app.use((err, req, res) => {
-  if (!err.statusCode) {
-    // eslint-disable-next-line no-param-reassign
-    err.statusCode = 500;
-  }
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
   res
-    .status(err.statusCode)
-    .send(err.message);
+    .status(statusCode)
+    .send({
+    // проверяем статус и выставляем сообщение в зависимости от него
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  // res.send({ message: err.message });
+  next();
 });
 
 app.listen(PORT, () => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
@@ -22,7 +23,7 @@ router.post(
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
-      link: Joi.string().required().uri(),
+      link: Joi.string().required().uri().pattern(/https?:\/\/[\w\-а-яё\.\_~:/?#\[\]@!$&'\(\)\*\+,;=]+\.\w{2,5}\/?[\w\-а-яё\.\_~:/?#\[\]@!$&'\(\)\*\+,;=]*/i),
     }),
   }),
   createCard,

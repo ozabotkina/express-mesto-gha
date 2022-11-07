@@ -10,10 +10,11 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.deleteOne({ _id: req.params.cardId, owner: req.user._id._id })
-    .then(({ deletedCount }) => {
-      if (deletedCount === 0) { throw new Error403('Среди созданных вами карточек такой нет'); }
-      if (deletedCount === 1) { res.send({ message: 'Карточка удалена' }); }
+  Card.findByIdAndDelete({ _id: req.params.cardId })
+    .then((card) => {
+      if (!card) { throw new NotFoundError('Такой карточки нет'); }
+      if (card.owner._id.toString() !== req.user._id._id) { throw new Error403('Карточка другого юзера'); }
+      res.send(card);
     })
     .catch(next);
 };
@@ -37,12 +38,8 @@ module.exports.likeCard = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .then((card) => {
-      if (!card) { throw new NotFoundError('Запрашиваемая карточка не найдена'); }
+      if (card === null || !card) { throw new NotFoundError('Запрашиваемая карточка не найдена'); }
       res.send({ card });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') { throw new BadRequest('Некорректный запрос'); }
-      if (err.name === 'CastError') { throw new NotFoundError('Запрашиваемая карточка не найдена'); }
     })
     .catch(next);
 };
@@ -55,12 +52,8 @@ module.exports.dislikeCard = (req, res, next) => {
 
   )
     .then((card) => {
-      if (!card) { throw new NotFoundError('Запрашиваемая карточка не найдена'); }
+      if (card === null || !card) { throw new NotFoundError('Запрашиваемая карточка не найдена'); }
       res.send({ card });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') { throw new BadRequest('Некорректный запрос'); }
-      if (err.name === 'CastError') { throw new NotFoundError('nЗапрашиваемая карточка не найдена'); }
     })
     .catch(next);
 };
