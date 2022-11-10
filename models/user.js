@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
         // eslint-disable-next-line no-useless-escape
         return regex.test(v);
       },
-      message: (props) => `${props.value} is not a valid phone number!`,
+      message: (props) => `${props.value} is not a valid url`,
     },
   },
 

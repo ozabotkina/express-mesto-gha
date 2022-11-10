@@ -8,6 +8,7 @@ const routerCards = require('./routes/cards');
 const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
 const tokenAuth = require('./middlewares/auth');
+const regex = require('./utils/const');
 
 const { PORT = 3000 } = process.env;
 
@@ -37,7 +38,7 @@ app.post(
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       // eslint-disable-next-line no-useless-escape
-      avatar: Joi.string().uri().pattern(/https?:\/\/[\w\-а-яё\.\_~:/?#\[\]@!$&'\(\)\*\+,;=]+\.\w{2,5}\/?[\w\-а-яё\.\_~:/?#\[\]@!$&'\(\)\*\+,;=]*/i),
+      avatar: Joi.string().uri().pattern(regex),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
