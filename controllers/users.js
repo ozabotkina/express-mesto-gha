@@ -19,7 +19,8 @@ module.exports.getUser = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') { return next(new BadRequest('Некорректный userID')); }
+      return next(err);
     });
 };
 
@@ -40,9 +41,9 @@ module.exports.createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.code === 11000) { throw new Error409('Емейл уже зарегистрирован'); }
-    })
-    .catch((err) => next(err));
+      if (err.code === 11000) { return next(new Error409('Емейл уже зарегистрирован')); }
+      return next(err);
+    });
 };
 
 module.exports.currentUser = (req, res, next) => {
@@ -67,10 +68,10 @@ module.exports.updateUser = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') { throw new BadRequest('Некорректный запрос'); }
-      if (err.name === 'CastError') { throw new NotFoundError('Запрашиваемый пользователь не найден'); }
-    })
-    .catch(next);
+      if (err.name === 'ValidationError') { return next(new BadRequest('Некорректный запрос')); }
+      if (err.name === 'CastError') { return next(new BadRequest('Запрашиваемый пользователь не найден')); }
+      return next(err);
+    });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -87,10 +88,10 @@ module.exports.updateAvatar = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') { throw new BadRequest('Некорректный запрос'); }
-      if (err.name === 'CastError') { throw new NotFoundError('Запрашиваемый пользователь не найден'); }
-    })
-    .catch(next);
+      if (err.name === 'ValidationError') { return next(new BadRequest('Некорректный запрос')); }
+      if (err.name === 'CastError') { return next(new BadRequest('Запрашиваемый пользователь не найден')); }
+      return next(err);
+    });
 };
 
 module.exports.login = (req, res, next) => {
