@@ -41,6 +41,7 @@ module.exports.createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
+      if (err.name === 'ValidationError') { return next(new BadRequest('Некорректный запрос')); }
       if (err.code === 11000) { return next(new Error409('Емейл уже зарегистрирован')); }
       return next(err);
     });
